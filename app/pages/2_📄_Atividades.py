@@ -13,7 +13,8 @@ st.set_page_config(page_title="ATIVIDADES",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json")
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 # Aba de atividades sendo carregada
 def abaAtividades():
@@ -135,8 +136,8 @@ def aplicarFormsContent(ft_nome_prof, atividade, data_formatada):
     # Insere o nome da nova coluna no cabeçalho (linha 1)
     abaAtv.update_value((1, nova_coluna_index), nova_coluna_nome)
 
-    # Escreve "pontuação" na célula abaixo da nova coluna (linha 2)
-    abaAtv.update_value((2, nova_coluna_index), "pontuação")
+    # Escreve "moedas" na célula abaixo da nova coluna (linha 2)
+    abaAtv.update_value((2, nova_coluna_index), "moedas")
     
     st.success(f"Nova coluna, criada com sucesso!")
 

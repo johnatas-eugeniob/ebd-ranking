@@ -41,6 +41,7 @@ Pygments==2.19.1
 pygsheets==2.0.6
 pyparsing==3.2.1
 python-dateutil==2.9.0.post0
+python-decouple==3.8
 pytz==2024.2
 referencing==0.36.1
 requests==2.32.3
@@ -51,6 +52,7 @@ rsa==4.9
 six==1.17.0
 smmap==5.0.2
 streamlit==1.41.1
+streamlit-aggrid==1.1.0
 tenacity==9.0.0
 toml==0.10.2
 tornado==6.4.2

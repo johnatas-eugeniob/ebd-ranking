@@ -21,8 +21,6 @@ if 'atividade_selecionada' not in st.session_state:
     st.session_state.atividade_selecionada = []
 if 'aluno_selected' not in st.session_state:
     st.session_state.aluno_selected = []
-if 'soma_points' not in st.session_state:
-    st.session_state.soma_points = []
 
 def abaAtividades():
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
@@ -83,7 +81,7 @@ def listNames():
     with op2:
         optionP6 = st.checkbox(label="Isabelle")
         optionP7 = st.checkbox(label="Isabely")
-        optionP8 = st.checkbox(label="Jhonny")
+        optionP8 = st.checkbox(label="Jhonny ")
         optionP9 = st.checkbox(label="Mônica")
         optionP10 = st.checkbox(label="Nicole")
     with op3:
@@ -122,60 +120,41 @@ def listNames():
     # Armazenando os alunos selecionados no session_state
     st.session_state.aluno_selected = aluno_selected
 
-def pontosParaReceber():
-    st.write("Selecione a area de pontos")
-    op1, op2, op3 = st.columns(3)
-    with op1:
-        optionT1 = st.checkbox(label="Presença (10s)")
-        optionT2 = st.checkbox(label="Revista (10s)")
-        optionT3 = st.checkbox(label="Biblia (10s)")
-        optionT4 = st.checkbox(label="Participação (20s)")
-        optionT5 = st.checkbox(label="Visitante (350s)")    
-        optionT6 = st.checkbox(label="Oferta (50s)")    
-    with op2:
-        optionT7 = st.checkbox(label="Respondeu pergunta direta (100s)")
-        optionT8 = st.checkbox(label="Resolução de dinâmica (200s)")
-        optionT9 = st.checkbox(label="Apresentação Final/Apresentação (1000s)")
-        optionT10 = st.checkbox(label="1° Lugar em jogos (300s)")
-        optionT11 = st.checkbox(label="2° Lugar em jogos (200s)")
-    with op3:
-        optionT12 = st.checkbox(label="3° Lugar em jogos (100s)")
-        optionT13 = st.checkbox(label="Participou em jogos(10s)")
+def sistemaMonetario():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaAtv = arquivo.worksheet_by_title("atividades")
+    dataAtv = abaAtv.get_all_values()
+    st.title("Atribuição de pontos ")
 
+    # Definir variaveis
+    taxa_conversao = 3600
 
-    point_selected = []
-    if optionT1:
-        point_selected.append(10)
-    if optionT2:
-        point_selected.append(10)
-    if optionT3:
-        point_selected.append(10)
-    if optionT4:
-        point_selected.append(20)
-    if optionT5:
-        point_selected.append(350)
-    if optionT6:
-        point_selected.append(50)
-    if optionT7:
-        point_selected.append(100)
-    if optionT8:
-        point_selected.append(200)
-    if optionT9:
-        point_selected.append(1000)
-    if optionT10:
-        point_selected.append(300)
-    if optionT11:
-        point_selected.append(200)
-    if optionT12:
-        point_selected.append(100)
-    if optionT13:
-        point_selected.append(10)
+    # Iterar pelas linhas (começando da segunda linha para ignorar o cabeçalho, se existir)
+    for i in range(1, len(dataAtv)):  # Assume que a primeira linha (índice 0) é o cabeçalho
+        try:
+            valor_coluna_27 = int(dataAtv[i][26]) # Acessa a coluna 27 (índice 26) e converte para inteiro
+        except ValueError:
+            print(f"Erro na linha {i+1}: valor na coluna 27 não é um número válido.")
+            continue # Pula para a próxima iteração se houver erro de conversão
 
-    soma_points = sum(point_selected)
-    # Armazenando os alunos selecionados no session_state
-    st.session_state.soma_points = soma_points
+        if valor_coluna_27 > taxa_conversao:
+            diferenca = valor_coluna_27 - taxa_conversao
 
-def somarPontos():
+            try:
+                dataAtv[i][25] = int(dataAtv[i][25]) + 1 # Incrementa a coluna 26 (índice 25)
+            except ValueError:
+                dataAtv[i][25] = 1 # Define para 1 caso não seja um número (ex: célula vazia ou texto)
+                print(f"Aviso na linha {i+1}: valor na coluna 26 não era um número, foi definido para 1")
+
+            dataAtv[i][26] = diferenca  # Atualiza a coluna 27 com a diferença
+
+    # Atualizar a planilha com os novos valores
+    abaAtv.update('A1', dataAtv) #Atualiza toda a planilha com os dados modificados
+
+    st.success("Planilha atualizada com sucesso!")
+
+def tirarPontos(sub_points):
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
     arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
     abaAtv = arquivo.worksheet_by_title("atividades")
@@ -184,13 +163,10 @@ def somarPontos():
             "atividade_selecionada" in st.session_state and 
             st.session_state.atividade_selecionada and 
             "aluno_selected" in st.session_state and 
-            st.session_state.aluno_selected and 
-            "soma_points" in st.session_state and 
-            st.session_state.soma_points
+            st.session_state.aluno_selected
         ):
             atividade_selecionada = st.session_state.atividade_selecionada
             aluno_selected = st.session_state.aluno_selected
-            soma_points = st.session_state.soma_points
 
             # Localizar a coluna da atividade selecionada
             coluna_atividade = dataAtv[0].index(atividade_selecionada)  # Assumindo que a primeira linha tenha os títulos das atividades
@@ -208,41 +184,28 @@ def somarPontos():
                         valor_atual = int(valor_atual) if valor_atual else 0
                         
                         # Somar os pontos
-                        novo_valor = valor_atual + soma_points
-                        # Antes verificar o valor contido na célula e somar com a variavel soma_points
+                        novo_valor = valor_atual - sub_points
+                        # Antes verificar o valor contido na célula e somar com a variavel sub_points
                         # se o valor na célula for vazio entenda como 0
                         abaAtv.update_value((i, coluna_atividade + 1), novo_valor)  # +1 porque pygsheets usa 1-based index
 
-            st.success(f"Ponto(s) atribuído(s) com sucesso ao(s) aluno(s): {', '.join(aluno_selected)}!")
+            st.success(f"Ponto(s) subtraido(s) com sucesso do(s) aluno(s): {', '.join(aluno_selected)}!")
             st.write(f"Atividade selecionada: {st.session_state.atividade_selecionada}. ")
-            st.write(f"Pontos a serem inseridos: {st.session_state.soma_points}")
+            st.write(f"Pontos a serem subtraidos: {sub_points}")
     else:
         st.error("Variáveis vazias! Preencha todas as informações.")
 
-# def sistemaMonetario():
-#    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
-#    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
-#    abaAtv = arquivo.worksheet_by_title("atividades")
-#    dataAtv = abaAtv.get_all_values()
-#    st.title("Atribuição de pontos ")
-
-    # Definir variaveis
-    taxa_conversao = 3600
-#    pass
-
-
 with st.container(border=True):
-    st.title("Atribuição/Remoção de pontos 🎯")
-    with st.form(key="atribuir pontuação"):
+    st.title("Remoção de pontos 🎯")
+    with st.form(key="Remover pontuação"):
         dropAtividades()
         listNames()
         st.write("___")
-        pontosParaReceber() 
 
-        submit_button = st.form_submit_button("Enviar")
-
-        if submit_button:
-            somarPontos()
+        sub_points = st.number_input(label="Quantos ciclos serão removidos?")
+        sub_button = st.form_submit_button("Remover Pontos")
+        if sub_button:
+            tirarPontos(sub_points)
 
     # Atualizar a tabela de alunos
         # Verificar se a função deve ser recarregada
@@ -257,5 +220,5 @@ with st.container(border=True):
         if att_table:
             # Atualizar o estado para recarregar a aba
             st.session_state.reload_aba = True
-            #sistemaMonetario() # Chama a função para atualizar as
+            sistemaMonetario() # Chama a função para atualizar as
             st.rerun()  # Recarregar a página para executar novamente a função

@@ -10,11 +10,12 @@ st.set_page_config(page_title="RANKING EBD",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json")
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 def sidebar():
     with st.sidebar:
-        st.write("Teste")
+        pass
 
 # Aba de atividades sendo carregada
 def abaAtividades():
@@ -43,7 +44,7 @@ def abaRanking():
     dfRk = dfRk.loc[:, ~dfRk.columns.duplicated()]
 
     # Exibindo o DataFrame no Streamlit
-    st.dataframe(dfRk)
+    st.dataframe(dfRk, width=1200)
 
 #Container grande na parte superior da pag
 with st.container(border = True):
