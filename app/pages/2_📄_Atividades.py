@@ -13,8 +13,8 @@ st.set_page_config(page_title="ATIVIDADES",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
-credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 # Aba de atividades sendo carregada
 def abaAtividades():

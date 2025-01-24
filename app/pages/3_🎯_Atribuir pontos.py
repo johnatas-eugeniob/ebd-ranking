@@ -13,8 +13,8 @@ st.set_page_config(page_title="PONTUAÇÃO",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
-credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 # Inicializa as listas no session_state se não existirem
 if 'atividade_selecionada' not in st.session_state:
