@@ -11,8 +11,8 @@ st.set_page_config(page_title="FICHARIO",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
-#credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 def graficoPresenca():
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"

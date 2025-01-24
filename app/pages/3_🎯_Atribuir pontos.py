@@ -13,8 +13,8 @@ st.set_page_config(page_title="PONTUAÇÃO",
                 )
 #st.set_page_config(page_icon = './task_icon.png')
 
-credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
-#credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
+#credentials = pygsheets.authorize(service_file=os.getcwd() + "./cred.json") # sem deploy
+credentials = pygsheets.authorize(service_file=os.getcwd() + "/cred.json") #para deploy
 
 # Inicializa as listas no session_state se não existirem
 if 'atividade_selecionada' not in st.session_state:
@@ -126,50 +126,47 @@ def pontosParaReceber():
     st.write("Selecione a area de pontos")
     op1, op2, op3 = st.columns(3)
     with op1:
-        optionT1 = st.checkbox(label="Presença (10s)")
-        optionT2 = st.checkbox(label="Revista (10s)")
-        optionT3 = st.checkbox(label="Biblia (10s)")
-        optionT4 = st.checkbox(label="Participação (20s)")
-        optionT5 = st.checkbox(label="Visitante (350s)")    
-        optionT6 = st.checkbox(label="Oferta (50s)")    
+        optionT1 = st.checkbox(label="Presença (100s)")
+        optionT2 = st.checkbox(label="Revista (50s)")
+        optionT3 = st.checkbox(label="Biblia (50s)")
+        optionT4 = st.checkbox(label="Participação (50s)")
+        optionT5 = st.checkbox(label="Visitante (500s)")    
+        optionT6 = st.checkbox(label="Oferta (200s)")    
     with op2:
-        optionT7 = st.checkbox(label="Respondeu pergunta direta (100s)")
+        optionT7 = st.checkbox(label="Respondeu pergunta direta (300s)")
         optionT8 = st.checkbox(label="Resolução de dinâmica (200s)")
         optionT9 = st.checkbox(label="Apresentação Final/Apresentação (1000s)")
-        optionT10 = st.checkbox(label="1° Lugar em jogos (300s)")
-        optionT11 = st.checkbox(label="2° Lugar em jogos (200s)")
+        optionT10 = st.checkbox(label="1° Lugar em jogos (500s)")
+        optionT11 = st.checkbox(label="2° Lugar em jogos (400s)")
     with op3:
-        optionT12 = st.checkbox(label="3° Lugar em jogos (100s)")
-        optionT13 = st.checkbox(label="Participou em jogos(10s)")
+        optionT12 = st.checkbox(label="3° Lugar em jogos (300s)")
 
 
     point_selected = []
     if optionT1:
-        point_selected.append(10)
-    if optionT2:
-        point_selected.append(10)
-    if optionT3:
-        point_selected.append(10)
-    if optionT4:
-        point_selected.append(20)
-    if optionT5:
-        point_selected.append(350)
-    if optionT6:
-        point_selected.append(50)
-    if optionT7:
         point_selected.append(100)
-    if optionT8:
+    if optionT2:
+        point_selected.append(50)
+    if optionT3:
+        point_selected.append(50)
+    if optionT4:
+        point_selected.append(50)
+    if optionT5:
+        point_selected.append(500)
+    if optionT6:
         point_selected.append(200)
+    if optionT7:
+        point_selected.append(300)
+    if optionT8:
+        point_selected.append(300)
     if optionT9:
         point_selected.append(1000)
     if optionT10:
-        point_selected.append(300)
+        point_selected.append(500)
     if optionT11:
-        point_selected.append(200)
+        point_selected.append(400)
     if optionT12:
-        point_selected.append(100)
-    if optionT13:
-        point_selected.append(10)
+        point_selected.append(300)
 
     soma_points = sum(point_selected)
     # Armazenando os alunos selecionados no session_state
