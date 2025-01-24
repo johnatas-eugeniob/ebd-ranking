@@ -2,5 +2,4 @@ venv
 .dockerignore
 docker-compose.yml
 Dockerfile
-fly.toml
 github
