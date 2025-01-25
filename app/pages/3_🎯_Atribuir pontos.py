@@ -23,6 +23,10 @@ if 'aluno_selected' not in st.session_state:
     st.session_state.aluno_selected = []
 if 'soma_points' not in st.session_state:
     st.session_state.soma_points = []
+if 'fichario_points' not in st.session_state:
+    st.session_state.fichario_points = []
+if 'area_pts_selected' not in st.session_state:
+    st.session_state.area_pts_selected = []
 
 def abaAtividades():
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
@@ -141,20 +145,33 @@ def pontosParaReceber():
     with op3:
         optionT12 = st.checkbox(label="3° Lugar em jogos (300s)")
 
-
+    fichario_selected = []
     point_selected = []
+    area_pts = []
     if optionT1:
         point_selected.append(100)
+        fichario_selected.append(1)
+        area_pts.append('presença')
     if optionT2:
         point_selected.append(50)
+        fichario_selected.append(1)
+        area_pts.append('revista')
     if optionT3:
         point_selected.append(50)
+        fichario_selected.append(1)
+        area_pts.append('biblia')
     if optionT4:
         point_selected.append(50)
+        fichario_selected.append(1)
+        area_pts.append('participação')
     if optionT5:
         point_selected.append(500)
+        fichario_selected.append(1)
+        area_pts.append('visitantes')
     if optionT6:
         point_selected.append(200)
+        fichario_selected.append(1)
+        area_pts.append('oferta')
     if optionT7:
         point_selected.append(300)
     if optionT8:
@@ -171,6 +188,88 @@ def pontosParaReceber():
     soma_points = sum(point_selected)
     # Armazenando os alunos selecionados no session_state
     st.session_state.soma_points = soma_points
+    st.session_state.fichario_points = fichario_selected
+    st.session_state.area_pts_selected = area_pts
+
+def abaFichario():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaFch = arquivo.worksheet_by_title("fichario")
+    dataFch = abaFch.get_all_values()
+    
+    # Criando DataFrame corretamente
+    dfFch = pd.DataFrame(dataFch[1:], columns=dataFch[0])
+
+    # Convertendo nomes das colunas para strings
+    dfFch.columns = dfFch.columns.map(str)
+    
+    # Removendo espaços extras dos nomes das colunas
+    dfFch.columns = dfFch.columns.str.strip()
+
+    # Limpando colunas vazias
+    dfFch.columns = [col if col != '' else f"Unnamed_{i}" for i, col in enumerate(dfFch.columns)]
+    
+    # Removendo colunas duplicadas
+    dfFch = dfFch.loc[:, ~dfFch.columns.duplicated(keep='first')]
+
+    st.dataframe(dfFch)
+
+def atribuirFichario():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaFch = arquivo.worksheet_by_title("fichario")
+    dataFch = abaFch.get_all_values()
+    
+    if (
+        "aluno_selected" in st.session_state and 
+        st.session_state.aluno_selected and 
+        "fichario_points" in st.session_state and
+        st.session_state.fichario_points and
+        "area_pts_selected" in st.session_state and
+        st.session_state.area_pts_selected
+    ):
+        area_pts_selected = st.session_state.area_pts_selected  # Lista de áreas
+        fichario_points = st.session_state.fichario_points  # Lista de pontos para cada área
+        aluno_selected = st.session_state.aluno_selected  # Lista de alunos
+        
+        # Verificar se area_pts_selected é uma lista; se não for, convertê-la para lista
+        if not isinstance(area_pts_selected, list):
+            area_pts_selected = [area_pts_selected]
+
+        if not isinstance(fichario_points, list):
+            fichario_points = [fichario_points] * len(area_pts_selected)  # Repetir o valor se for único
+        
+        # Garantir que a quantidade de pontos corresponde ao número de áreas selecionadas
+        if len(area_pts_selected) != len(fichario_points):
+            st.error("A quantidade de áreas e pontos fornecidos não correspondem.")
+            return
+
+        # Iterar sobre todas as áreas selecionadas
+        for area, pontos in zip(area_pts_selected, fichario_points):
+            if area in dataFch[0]:
+                coluna_fichario = dataFch[0].index(area)
+            else:
+                st.error(f"A área selecionada '{area}' não foi encontrada no cabeçalho da planilha.")
+                continue  # Pula para a próxima área
+
+            # Para cada aluno selecionado, encontrar a linha correspondente e inserir os pontos
+            for aluno in aluno_selected:
+                for i, row in enumerate(dataFch[1:], start=2):  
+                    if row[0] == aluno:  
+                        valor_atual = abaFch.cell((i, coluna_fichario + 1)).value
+                                
+                        # Tratar valor vazio como zero
+                        valor_atual = int(valor_atual) if valor_atual else 0
+                        
+                        pontos = int(pontos)  # Converter pontos para inteiro
+                        novo_valor = valor_atual + pontos
+
+                        # Atualizar o valor na célula correspondente
+                        abaFch.update_value((i, coluna_fichario + 1), novo_valor)
+
+        st.success(f"Fichario atualizado com sucesso!")
+    else:
+        st.error("Variáveis vazias!")
 
 def somarPontos():
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
@@ -216,20 +315,16 @@ def somarPontos():
     else:
         st.error("Variáveis vazias! Preencha todas as informações.")
 
-# def sistemaMonetario():
-#    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
-#    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
-#    abaAtv = arquivo.worksheet_by_title("atividades")
-#    dataAtv = abaAtv.get_all_values()
-#    st.title("Atribuição de pontos ")
-
-    # Definir variaveis
-    taxa_conversao = 3600
-#    pass
-
+def sistemaMonetario():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaAtv = arquivo.worksheet_by_title("atividades")
+    dataAtv = abaAtv.get_all_values()
+    st.title("Atribuição de pontos ")
+    pass
 
 with st.container(border=True):
-    st.title("Atribuição/Remoção de pontos 🎯")
+    st.title("Atribuição 🎯")
     with st.form(key="atribuir pontuação"):
         dropAtividades()
         listNames()
@@ -240,6 +335,7 @@ with st.container(border=True):
 
         if submit_button:
             somarPontos()
+            atribuirFichario()
 
     # Atualizar a tabela de alunos
         # Verificar se a função deve ser recarregada

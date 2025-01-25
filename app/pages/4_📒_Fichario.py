@@ -86,6 +86,42 @@ def graficoRevista():
     # Plotando o gráfico de barras
     st.bar_chart(dfAtv.set_index('nome')['revista'])
 
+def participacao():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaAtv = arquivo.worksheet_by_title("fichario")
+    dataAtv = abaAtv.get_all_values()
+
+    # Criando DataFrame
+    dfAtv = pd.DataFrame(dataAtv[1:], columns=dataAtv[0])
+
+    # Verificando os dados para garantir que as colunas 'nome' e 'participação' estão corretas
+    print(dfAtv.head())
+
+    # Garantindo que 'nome' e 'participação' estão no formato adequado
+    dfAtv['participação'] = pd.to_numeric(dfAtv['participação'], errors='coerce')
+
+    # Plotando o gráfico de barras
+    st.bar_chart(dfAtv.set_index('nome')['participação'])
+
+def oferta():
+    meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
+    arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
+    abaAtv = arquivo.worksheet_by_title("fichario")
+    dataAtv = abaAtv.get_all_values()
+
+    # Criando DataFrame
+    dfAtv = pd.DataFrame(dataAtv[1:], columns=dataAtv[0])
+
+    # Verificando os dados para garantir que as colunas 'nome' e 'oferta' estão corretas
+    print(dfAtv.head())
+
+    # Garantindo que 'nome' e 'oferta' estão no formato adequado
+    dfAtv['oferta'] = pd.to_numeric(dfAtv['oferta'], errors='coerce')
+
+    # Plotando o gráfico de barras
+    st.bar_chart(dfAtv.set_index('nome')['oferta'])
+    
 def total():
     meuArquivoGsheetsAtv = "https://docs.google.com/spreadsheets/d/1CKUx4qySqsdmqhp_Xv0A9_BewcC9ekmm2Q1eiro1a_U/edit?usp=sharing"
     arquivo = credentials.open_by_url(meuArquivoGsheetsAtv)
@@ -122,6 +158,14 @@ with st.container(border=True):
     with st.container(border=True):
         st.subheader("Revista 📔")
         graficoRevista()
+        st.write("___")
+    with st.container(border=True):
+        st.subheader("Participacao 🕺")
+        participacao()
+        st.write("___")
+    with st.container(border=True):
+        st.subheader("Oferta 🪙")
+        oferta()
         st.write("___")
     with st.container(border=True):
         st.title("Total ♾️")

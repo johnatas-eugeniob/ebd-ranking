@@ -148,6 +148,5 @@ with st.container(border = True):
         formsAddLesson()
         st.write("___")
         st.subheader("Atividades Lançadas")
-        dropAtividades()
         abaAtividades()
         
